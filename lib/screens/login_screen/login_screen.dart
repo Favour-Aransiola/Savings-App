@@ -113,40 +113,43 @@ class _LoginScreenState extends State<LoginScreen> {
             Center(
                 child: InkWell(
               onTap: () async {
-                if (formKey.currentState!.validate()) {
-                  setState(() {
-                    loading = true;
-                  });
-                  Response response = await auth.loginUser(
-                          emailController.text, passwordController.text)
-                      as Response;
-
-                  if (response.statusCode == 200) {
-                    Navigator.of(context).pushNamed(DashBoard.routeName);
-                  } else {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            elevation: 2,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Ok'))
-                            ],
-                            content:
-                                const Text('Incorrect Username or password'),
-                          );
-                        });
+                try {
+                  if (formKey.currentState!.validate()) {
+                    setState(() {
+                      loading = true;
+                    });
+                    Response response = await auth.loginUser(
+                            emailController.text, passwordController.text)
+                        as Response;
+                    print(response.statusCode);
+                    if (response.statusCode == 200) {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          DashBoard.routeName, (route) => false);
+                    }
                   }
+                } catch (err) {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          actions: [
+                            TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Ok'))
+                          ],
+                          content: const Text('Incorrect Username or password'),
+                        );
+                      });
+                } finally {
+                  setState(() {
+                    loading = false;
+                  });
                 }
-                setState(() {
-                  loading = false;
-                });
               },
               child: Container(
                 alignment: Alignment.center,
