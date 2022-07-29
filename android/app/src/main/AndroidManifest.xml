@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.assesment">
+    <uses-permission android:name="android.permission.INTERNET"/> <!-- Add this -->
    <application
         android:label="assesment"
         android:name="${applicationName}"
@@ -32,3 +33,5 @@
             android:value="2" />
     </application>
 </manifest>
+
+ 

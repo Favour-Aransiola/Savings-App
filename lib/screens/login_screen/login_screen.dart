@@ -121,11 +121,30 @@ class _LoginScreenState extends State<LoginScreen> {
                     Response response = await auth.loginUser(
                             emailController.text, passwordController.text)
                         as Response;
-                    print(response.statusCode);
-                    if (response.statusCode == 200) {
+                    print(jsonDecode(response.body)['api_status']);
+                    if (jsonDecode(response.body)['api_status'] == '200' ||
+                        jsonDecode(response.body)['api_status'] == 200) {
                       Navigator.of(context).pushNamedAndRemoveUntil(
                           DashBoard.routeName, (route) => false);
                     }
+                  } else {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Ok'))
+                              ],
+                              content:
+                                  const Text('Incorrect Username or password'));
+                        });
                   }
                 } catch (err) {
                   showDialog(
@@ -142,9 +161,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                                 child: const Text('Ok'))
                           ],
-                          content: const Text('Incorrect Username or password'),
+                          content: const Text('No Internet connection'),
                         );
                       });
+                  // Navigator.of(context).pushNamedAndRemoveUntil(
+                  //     DashBoard.routeName, (route) => false);
                 } finally {
                   setState(() {
                     loading = false;
